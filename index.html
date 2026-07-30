@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NLC Performance Timer</title>
+    <title>Q&D Timer - NLC Performance</title>
     <!-- React & Babel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -19,27 +19,25 @@
                         'brand-orange-glow': 'rgba(255, 85, 0, 0.4)',
                         'tactical-black': '#050505',
                         'tactical-gray': '#111111',
+                        'premium-dark': '#0a0a0a',
                     },
                     boxShadow: {
-                        'neon-orange': '0 0 10px rgba(255, 85, 0, 0.6), 0 0 20px rgba(255, 85, 0, 0.4)',
-                        'neon-white': '0 0 10px rgba(255, 255, 255, 0.4)',
+                        'neon-orange': '0 0 20px rgba(255, 85, 0, 0.4), 0 0 40px rgba(255, 85, 0, 0.1)',
+                        'neon-white': '0 0 15px rgba(255, 255, 255, 0.2)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Oswald:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700;800&family=Oswald:wght@300;400;600;700&display=swap');
         
         body {
-            background-color: #050505;
-            /* Tactical grid background */
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-color: #030303;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #030303 70%);
             color: #e5e5e5;
-            font-family: 'Oswald', sans-serif;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             overflow-y: auto;
             touch-action: manipulation;
@@ -48,71 +46,51 @@
         }
 
         .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-header { font-family: 'Oswald', sans-serif; }
         
         /* Custom Animations */
         @keyframes pulse-orange {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 85, 0, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 85, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 85, 0, 0); }
         }
         .animate-pulse-orange { animation: pulse-orange 2s infinite; }
 
-        @keyframes scanline { 
-            0% { transform: translateY(-100%); } 
-            100% { transform: translateY(100vh); } 
-        }
-        .scanline-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.25) 51%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 50;
-        }
-        .scanline-bar {
-            width: 100%;
-            height: 50px;
-            z-index: 51;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(0,0,0,0) 100%);
-            position: absolute;
-            top: 0;
-            animation: scanline 8s linear infinite;
-            pointer-events: none;
+        /* Premium Glass & Button Styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
         }
 
-        /* Tactical Button Styling */
-        .btn-tactical {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: all 0.2s ease;
+        .btn-premium {
+            background: rgba(25, 25, 25, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0a0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            /* Ensure text wrapping on very narrow phones */
-            white-space: normal;
-            word-wrap: break-word;
+            border-radius: 16px;
         }
-        .btn-tactical:active { transform: translateY(2px); }
-        .btn-tactical.selected {
-            border-color: #ffffff;
+        .btn-premium:active { transform: scale(0.97); }
+        .btn-premium.selected {
             background: #ffffff;
+            border-color: #ffffff;
             color: #000000;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.15);
         }
         
-        .text-glow-orange { text-shadow: 0 0 10px rgba(255,85,0,0.8); }
-        .text-glow-white { text-shadow: 0 0 15px rgba(255,255,255,0.6); }
+        .text-glow-orange { text-shadow: 0 0 20px rgba(255,85,0,0.6); }
+        .text-glow-white { text-shadow: 0 0 20px rgba(255,255,255,0.4); }
         
-        /* Custom scrollbar for clean look if needed */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
     </style>
 </head>
 <body>
-    <div class="scanline-overlay fixed"></div>
     <div id="root" class="min-h-[100dvh] w-full relative z-10 flex flex-col"></div>
 
     <script type="text/babel" data-presets="react,env">
@@ -251,7 +229,7 @@
         // --- FOOTER COMPONENT ---
         const Footer = () => (
             <div className="w-full text-center pb-6 pt-4 mt-auto">
-                <span className="text-[10px] font-mono tracking-[0.4em] text-gray-600 uppercase">
+                <span className="text-[10px] font-mono tracking-[0.4em] text-gray-500 uppercase opacity-60">
                     Adapt // Recover // Master
                 </span>
             </div>
@@ -259,9 +237,9 @@
 
         // --- SYSTEM BADGE ---
         const SystemBadge = ({ text, active }) => (
-            <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
-                <div className={`w-2 h-2 rounded-full ${active ? 'bg-brand-orange shadow-neon-orange animate-pulse' : 'bg-gray-700'}`}></div>
-                <span className={`text-[9px] font-mono tracking-widest uppercase ${active ? 'text-brand-orange' : 'text-gray-600'}`}>{text}</span>
+            <div className="absolute top-6 right-6 flex items-center gap-2 z-50 glass-panel px-3 py-1.5 rounded-full border border-white/5 shadow-glass">
+                <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-brand-orange shadow-neon-orange animate-pulse' : 'bg-gray-600'}`}></div>
+                <span className={`text-[10px] font-mono tracking-widest uppercase ${active ? 'text-white' : 'text-gray-500'}`}>{text}</span>
             </div>
         );
 
@@ -280,27 +258,27 @@
             };
 
             const getBtnColor = (isSelected, value, type) => {
-                if (!isSelected) return 'bg-tactical-gray border-[#222] text-gray-500 hover:border-[#444]';
+                if (!isSelected) return 'btn-premium';
                 
                 const isBad = type === 'energy' ? value === 1 : value === 3;
                 const isMed = value === 2;
                 
-                if (isBad) return 'bg-[#2a0e00] border-brand-orange text-brand-orange shadow-[0_0_15px_rgba(255,85,0,0.15)]';
-                if (isMed) return 'bg-[#1a1a1a] border-gray-400 text-gray-200';
-                return 'bg-white border-white text-black shadow-neon-white'; 
+                if (isBad) return 'bg-gradient-to-br from-orange-900 to-[#2a0e00] border-brand-orange text-brand-orange shadow-neon-orange font-semibold rounded-xl';
+                if (isMed) return 'bg-gray-800 border-gray-500 text-gray-200 font-semibold rounded-xl';
+                return 'bg-white border-white text-black shadow-neon-white font-semibold rounded-xl'; 
             };
 
             const Selector = ({ label, val, setVal, type }) => (
-                <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs uppercase tracking-widest text-gray-400">{label}</span>
+                <div className="mb-5">
+                    <div className="flex justify-between items-center mb-2.5 px-1">
+                        <span className="text-xs uppercase tracking-widest text-gray-400 font-medium">{label}</span>
                     </div>
-                    <div className="flex gap-2 h-14">
+                    <div className="flex gap-3 h-14">
                         {[1, 2, 3].map(v => (
                             <button 
                                 key={v}
                                 onClick={() => setVal(v)}
-                                className={`flex-1 border transition-all duration-200 font-mono text-sm tracking-wider ${getBtnColor(val === v, v, type)}`}
+                                className={`flex-1 transition-all duration-300 font-mono text-sm tracking-wider ${getBtnColor(val === v, v, type)}`}
                             >
                                 {type === 'energy' 
                                     ? (v === 1 ? 'LOW' : v === 2 ? 'MED' : 'HIGH')
@@ -315,21 +293,25 @@
             return (
                 <div className="h-full flex flex-col p-6 max-w-lg mx-auto w-full animate-fade-in z-20 relative">
                     <div className="flex-1 flex flex-col justify-center">
-                        <div className="mb-10 text-center">
-                            <h1 className="text-5xl font-black italic tracking-tighter leading-none text-white drop-shadow-lg">
-                                NLC <span className="text-brand-orange text-glow-orange">PERFORMANCE</span>
+                        <div className="mb-8 text-center">
+                            <img src="nlcpWHITE.png" alt="NLC Performance" className="w-28 h-28 mx-auto rounded-full shadow-[0_0_30px_rgba(255,85,0,0.15)] mb-6 ring-1 ring-white/10 object-cover" />
+                            <h1 className="text-4xl sm:text-5xl font-header font-bold tracking-tight leading-none text-white drop-shadow-lg mb-1">
+                                Q&D <span className="text-brand-orange text-glow-orange">TIMER</span>
                             </h1>
-                            <h2 className="text-sm font-mono tracking-[0.4em] text-gray-500 uppercase mt-3">Tactical Timer</h2>
-                            <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent mt-8"></div>
+                            <h2 className="text-[10px] font-mono tracking-[0.3em] text-gray-400 uppercase mt-2">NLC Performance</h2>
                         </div>
-                        <Selector label="Soreness" val={soreness} setVal={setSoreness} type="negative" />
-                        <Selector label="Tiredness" val={tiredness} setVal={setTiredness} type="negative" />
-                        <Selector label="Energy Levels" val={energy} setVal={setEnergy} type="energy" />
+                        
+                        <div className="glass-panel p-5 sm:p-6 mb-6">
+                            <Selector label="Soreness" val={soreness} setVal={setSoreness} type="negative" />
+                            <Selector label="Tiredness" val={tiredness} setVal={setTiredness} type="negative" />
+                            <Selector label="Energy Levels" val={energy} setVal={setEnergy} type="energy" />
+                        </div>
                     </div>
+                    
                     <button 
                         disabled={!soreness || !tiredness || !energy}
                         onClick={check}
-                        className="w-full py-5 bg-white text-black font-bold text-lg uppercase tracking-widest disabled:opacity-10 hover:bg-brand-orange hover:text-white transition-all shadow-lg hover:shadow-neon-orange"
+                        className="w-full py-5 bg-white text-black font-semibold text-sm uppercase tracking-widest rounded-2xl disabled:opacity-20 disabled:scale-100 hover:scale-[1.02] hover:bg-brand-orange hover:text-white hover:shadow-neon-orange transition-all duration-300 shadow-lg"
                     >
                         Initialize System
                     </button>
@@ -357,7 +339,7 @@
             }, [forcedLow]);
 
             const rollDie = () => {
-                SoundFX.init(); // Initialize audio context on user interaction
+                SoundFX.init(); 
                 
                 if (badDay) {
                     setSeriesCount(2);
@@ -381,40 +363,48 @@
             };
 
             const executeMission = () => {
-                SpeechEngine.prime(); // Unlock speech synthesis
+                SpeechEngine.prime(); 
                 onLaunch({ exercise, protocol, seriesCount, totalReps });
             };
 
             return (
                 <div className="h-full flex flex-col p-6 max-w-lg mx-auto w-full justify-between animate-fade-in z-20 relative">
-                    <div>
-                        <h2 className="text-sm font-mono text-gray-400 mb-8 uppercase tracking-widest border-b border-gray-800 pb-3">Mission Config</h2>
-                        
-                        <div className="mb-8">
-                            <label className="text-xs font-mono text-brand-orange uppercase mb-3 block">Movement Pattern</label>
-                            <div className="flex gap-3">
-                                <button onClick={() => setExercise('A')} className={`btn-tactical flex-1 py-4 text-sm ${exercise === 'A' ? 'selected' : ''}`}>Swings + Pushups</button>
-                                <button onClick={() => setExercise('B')} className={`btn-tactical flex-1 py-4 text-sm ${exercise === 'B' ? 'selected' : ''}`}>Snatch (L & R)</button>
+                    <div className="mt-4">
+                        <div className="flex items-center gap-4 mb-8">
+                            <img src="nlcpWHITE.png" alt="NLC Logo" className="w-12 h-12 rounded-full ring-1 ring-white/10" />
+                            <div>
+                                <h2 className="text-xl font-header font-bold text-white tracking-wide">MISSION CONFIG</h2>
+                                <p className="text-[10px] font-mono text-brand-orange uppercase tracking-widest">Select Parameters</p>
                             </div>
                         </div>
                         
-                        <div className="mb-8">
-                            <label className="text-xs font-mono text-brand-orange uppercase mb-3 block">Protocol</label>
-                            <div className="flex gap-3">
-                                <button onClick={() => setProtocol('5/4')} className={`btn-tactical flex-1 py-4 ${protocol === '5/4' ? 'selected' : ''}`}>
-                                    <span className="text-lg">5/4</span><br/><span className={`text-[10px] uppercase font-mono tracking-widest ${protocol === '5/4' ? 'text-gray-800' : 'text-gray-500'}`}>Power</span>
-                                </button>
-                                <button onClick={() => setProtocol('10/2')} className={`btn-tactical flex-1 py-4 ${protocol === '10/2' ? 'selected' : ''}`}>
-                                    <span className="text-lg">10/2</span><br/><span className={`text-[10px] uppercase font-mono tracking-widest ${protocol === '10/2' ? 'text-gray-800' : 'text-gray-500'}`}>Mass</span>
-                                </button>
+                        <div className="glass-panel p-5 sm:p-6 mb-6">
+                            <div className="mb-8">
+                                <label className="text-xs font-semibold text-gray-400 uppercase mb-3 block tracking-wider">Movement Pattern</label>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setExercise('A')} className={`btn-premium flex-1 py-4 text-sm ${exercise === 'A' ? 'selected' : ''}`}>Swings + Pushups</button>
+                                    <button onClick={() => setExercise('B')} className={`btn-premium flex-1 py-4 text-sm ${exercise === 'B' ? 'selected' : ''}`}>Snatch (L/R)</button>
+                                </div>
+                            </div>
+                            
+                            <div className="mb-2">
+                                <label className="text-xs font-semibold text-gray-400 uppercase mb-3 block tracking-wider">Protocol</label>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setProtocol('5/4')} className={`btn-premium flex-1 py-4 ${protocol === '5/4' ? 'selected' : ''}`}>
+                                        <span className="text-lg font-header">5/4</span><br/><span className={`text-[10px] uppercase font-mono tracking-widest opacity-70`}>Power</span>
+                                    </button>
+                                    <button onClick={() => setProtocol('10/2')} className={`btn-premium flex-1 py-4 ${protocol === '10/2' ? 'selected' : ''}`}>
+                                        <span className="text-lg font-header">10/2</span><br/><span className={`text-[10px] uppercase font-mono tracking-widest opacity-70`}>Mass</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         
                         {!forcedLow && !rolled && (
-                            <div className="flex items-center justify-between bg-tactical-gray p-4 border border-gray-800 cursor-pointer hover:border-gray-600 transition-colors" onClick={() => setBadDay(!badDay)}>
-                                <span className="text-xs font-mono text-white uppercase tracking-widest">Manual Regression?</span>
-                                <div className={`w-12 h-6 rounded-full relative transition-colors ${badDay ? 'bg-brand-orange shadow-neon-orange' : 'bg-gray-800'}`}>
-                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${badDay ? 'left-7' : 'left-1'}`}></div>
+                            <div className="glass-panel p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors" onClick={() => setBadDay(!badDay)}>
+                                <span className="text-xs font-semibold text-gray-300 uppercase tracking-widest">Manual Regression?</span>
+                                <div className={`w-12 h-6 rounded-full relative transition-all duration-300 ${badDay ? 'bg-brand-orange shadow-neon-orange' : 'bg-gray-800'}`}>
+                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${badDay ? 'left-7' : 'left-1 shadow-sm'}`}></div>
                                 </div>
                             </div>
                         )}
@@ -422,36 +412,35 @@
                     
                     <div className="text-center mt-auto mb-2">
                         {!rolled ? (
-                            <button onClick={rollDie} className="w-full py-6 bg-white text-black font-bold text-xl uppercase tracking-widest hover:bg-brand-orange hover:text-white transition-all hover:shadow-neon-orange shadow-lg">
+                            <button onClick={rollDie} className="w-full py-5 bg-white text-black font-semibold text-sm uppercase tracking-widest rounded-2xl hover:scale-[1.02] hover:bg-brand-orange hover:text-white transition-all duration-300 shadow-lg hover:shadow-neon-orange">
                                 Roll The Die
                             </button>
                         ) : (
-                            <div className="animate-fade-in bg-tactical-gray border border-gray-800 p-6 shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-brand-orange"></div>
-                                <div className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-2">Target Acquired</div>
-                                {diceValue > 0 && <div className="text-brand-orange text-xs font-mono mb-4 tracking-widest drop-shadow">DICE ROLLED: {diceValue}</div>}
+                            <div className="animate-fade-in glass-panel p-8 shadow-2xl relative overflow-hidden border-t-2 border-t-brand-orange">
+                                <div className="text-gray-400 text-[10px] font-mono uppercase tracking-widest mb-2">Target Acquired</div>
+                                {diceValue > 0 && <div className="text-brand-orange text-xs font-mono font-bold mb-5 tracking-widest drop-shadow">DICE ROLLED: {diceValue}</div>}
                                 
-                                <div className="text-4xl md:text-5xl font-mono font-bold text-white mb-6 leading-tight text-glow-white">
+                                <div className="text-4xl md:text-5xl font-header font-bold text-white mb-6 leading-tight text-glow-white">
                                     {exercise === 'A' ? (
                                         <>
-                                            {seriesCount * 20} <span className="text-xl text-gray-500 tracking-widest">SWINGS</span><br/>
-                                            <span className="text-brand-orange text-2xl mx-2">/</span><br/>
-                                            {seriesCount * 20} <span className="text-xl text-gray-500 tracking-widest">PUSHUPS</span>
+                                            {seriesCount * 20} <span className="text-xl text-gray-400 tracking-widest font-normal">SWINGS</span><br/>
+                                            <span className="text-brand-orange text-2xl mx-2 opacity-50">/</span><br/>
+                                            {seriesCount * 20} <span className="text-xl text-gray-400 tracking-widest font-normal">PUSHUPS</span>
                                         </>
                                     ) : (
                                         <>
-                                            {seriesCount * 20} <span className="text-xl text-gray-500 tracking-widest">SNATCHES</span>
+                                            {seriesCount * 20} <span className="text-xl text-gray-400 tracking-widest font-normal">SNATCHES</span>
                                         </>
                                     )}
                                 </div>
 
-                                <div className="text-white text-sm font-bold uppercase tracking-widest mb-6 py-2 border-y border-gray-800">{seriesCount} Series Total</div>
+                                <div className="text-white text-xs font-medium uppercase tracking-widest mb-8 py-3 border-y border-white/10 bg-white/5 rounded-lg">{seriesCount} Series Total</div>
                                 
-                                {forcedLow && <div className="text-brand-orange text-xs font-mono border border-brand-orange inline-block px-3 py-2 mb-6 bg-orange-900/20 shadow-neon-orange">⚠ READINESS COMPROMISED</div>}
+                                {forcedLow && <div className="text-brand-orange text-[10px] font-mono border border-brand-orange/50 rounded-lg px-3 py-2 mb-6 bg-orange-900/20 shadow-neon-orange backdrop-blur-sm">⚠ READINESS COMPROMISED</div>}
                                 
                                 <button 
                                     onClick={executeMission}
-                                    className="w-full py-5 bg-brand-orange text-white font-bold text-lg uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-neon-orange"
+                                    className="w-full py-5 bg-gradient-to-r from-brand-orange to-[#ff7700] text-white font-semibold text-sm uppercase tracking-widest rounded-xl hover:scale-[1.02] hover:shadow-neon-orange transition-all duration-300"
                                 >
                                     Execute Order
                                 </button>
@@ -482,16 +471,14 @@
             const workTriggers = config.protocol === '5/4' ? [0, 30, 60, 90] : [0, 60];
             const deepRestStart = config.protocol === '5/4' ? 120 : 90; 
 
-            // Handle Wake Lock activation
             useEffect(() => { 
                 setIsActive(true); 
                 requestLock();
                 SpeechEngine.speak("Standby. Mission begins.");
             }, [requestLock]);
 
-            // Verbal Cues Engine
             useEffect(() => {
-                if (status === spokenState) return; // Prevent repeating
+                if (status === spokenState) return; 
                 
                 if (status === 'WORK') {
                     SpeechEngine.speak("Work!");
@@ -499,7 +486,6 @@
                     SpeechEngine.speak("Recover.");
                 } else if (status === 'DEEP REST') {
                     SpeechEngine.speak("Deep rest.");
-                    // Delay the specific cue slightly
                     if (cue) {
                         setTimeout(() => {
                             if(isActive) SpeechEngine.speak(cue);
@@ -509,7 +495,6 @@
                 setSpokenState(status);
             }, [status, cue, spokenState, isActive]);
 
-            // Timer Engine
             useEffect(() => {
                 if (isActive && !showAbortModal) {
                     intervalRef.current = setInterval(() => {
@@ -522,11 +507,9 @@
                 return () => clearInterval(intervalRef.current);
             }, [isActive, showAbortModal]);
 
-            // State Logic Engine
             useEffect(() => {
                 if (showAbortModal) return;
 
-                // BLOCK/SERIES END LOGIC
                 if (time >= SERIES_DURATION) {
                     if (config.exercise === 'A') {
                         if (currentBlock === 'SWINGS') {
@@ -548,7 +531,6 @@
                             }
                         }
                     } else {
-                        // Snatches
                         if (currentSeries < config.seriesCount) {
                             setCurrentSeries(c => c + 1);
                             setTime(0);
@@ -563,7 +545,6 @@
                     return;
                 }
 
-                // TRIGGERS
                 if (workTriggers.includes(time)) {
                     setStatus('WORK');
                     SoundFX.play('WORK'); 
@@ -581,7 +562,6 @@
                     }
                 }
 
-                // 3-2-1 PIPS
                 const nextTrigger = workTriggers.find(t => t > time) || SERIES_DURATION;
                 if (nextTrigger - time <= 3 && nextTrigger - time > 0) {
                     SoundFX.play('PIP'); 
@@ -605,44 +585,53 @@
 
             return (
                 <div className="h-full flex flex-col p-6 max-w-lg mx-auto relative w-full z-20">
-                    <div className="scanline-bar"></div>
                     <SystemBadge text="Screen Lock Active" active={isLocked} />
                     
                     {/* Header */}
-                    <div className="flex justify-between items-end border-b border-gray-800 pb-4 mb-8 mt-6">
-                        <div>
-                            <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">Series</div>
-                            <div className="text-3xl font-mono text-white drop-shadow">{currentSeries} <span className="text-gray-700 text-xl">/ {config.seriesCount}</span></div>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-xs font-mono text-gray-500 uppercase tracking-widest">Total Time</div>
-                            <div className="text-xl font-mono text-gray-300">{formatTime(totalTime)}</div>
+                    <div className="flex justify-between items-end pb-4 mb-8 mt-4">
+                        <div className="glass-panel px-4 py-2 flex gap-4 items-center border-none bg-white/5">
+                            <div>
+                                <div className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mb-1">Series</div>
+                                <div className="text-2xl font-header font-bold text-white drop-shadow">{currentSeries} <span className="text-gray-500 text-lg font-normal">/ {config.seriesCount}</span></div>
+                            </div>
+                            <div className="w-px h-8 bg-white/10"></div>
+                            <div>
+                                <div className="text-[10px] font-mono text-gray-400 uppercase tracking-widest mb-1">Total</div>
+                                <div className="text-xl font-mono text-gray-200">{formatTime(totalTime)}</div>
+                            </div>
                         </div>
                     </div>
 
                     {/* HUD */}
-                    <div className="flex-1 flex flex-col items-center justify-center">
-                        <div className="text-sm font-mono text-brand-orange mb-3 uppercase font-bold tracking-[0.2em] bg-orange-900/20 px-4 py-1 border border-brand-orange/30">
-                            Current: {currentBlock}
+                    <div className="flex-1 flex flex-col items-center justify-center relative">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-brand-orange/10 rounded-full blur-3xl -z-10 animate-pulse-orange pointer-events-none"></div>
+
+                        <div className="glass-panel px-6 py-1.5 mb-6 rounded-full border-brand-orange/30 bg-orange-900/10">
+                            <span className="text-xs font-semibold text-brand-orange uppercase tracking-[0.2em] shadow-sm">
+                                {currentBlock}
+                            </span>
                         </div>
                         
-                        <div className={`text-5xl sm:text-6xl font-black italic uppercase text-center leading-none mb-6 ${statusColor} transition-all duration-300`}>
+                        <div className={`text-4xl sm:text-5xl md:text-6xl font-header font-bold italic uppercase text-center leading-none mb-8 ${statusColor} transition-all duration-500`}>
                             {getInstruction()}
                         </div>
                         
-                        <div className="w-full bg-tactical-gray border border-gray-800 h-2 mb-8 relative overflow-hidden rounded-full">
-                            <div className="absolute top-0 left-0 h-full bg-white transition-all duration-1000 linear shadow-neon-white" style={{width: `${(time / SERIES_DURATION) * 100}%`}}></div>
+                        <div className="w-full bg-black/50 border border-white/10 h-2 sm:h-3 mb-10 relative overflow-hidden rounded-full backdrop-blur-sm">
+                            <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-white/50 to-white transition-all duration-1000 linear shadow-neon-white rounded-full" style={{width: `${(time / SERIES_DURATION) * 100}%`}}></div>
                         </div>
                         
-                        <div className="text-8xl sm:text-9xl font-mono font-bold text-white tracking-tighter drop-shadow-lg">
+                        <div className="text-8xl sm:text-9xl font-mono font-bold text-white tracking-tighter drop-shadow-xl" style={{ fontVariantNumeric: 'tabular-nums' }}>
                             {formatTime(SERIES_DURATION - time)}
                         </div>
                         
-                        <div className="h-24 mt-8 w-full">
+                        <div className="h-24 mt-10 w-full max-w-sm">
                             {status === 'DEEP REST' && (
-                                <div className="p-4 border-l-4 border-brand-orange bg-[#0a0a0a] w-full animate-fade-in shadow-lg">
-                                    <div className="text-[10px] font-mono text-brand-orange uppercase mb-1 font-bold tracking-widest">Audio Coach</div>
-                                    <div className="text-xl font-medium italic text-gray-200">"{cue}"</div>
+                                <div className="p-5 glass-panel border-l-4 border-l-brand-orange rounded-xl animate-fade-in shadow-lg bg-black/40">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></div>
+                                        <div className="text-[10px] font-mono text-brand-orange uppercase font-bold tracking-widest">Audio Coach</div>
+                                    </div>
+                                    <div className="text-lg font-medium italic text-gray-200 leading-snug">"{cue}"</div>
                                 </div>
                             )}
                         </div>
@@ -650,21 +639,24 @@
 
                     {/* ABORT BUTTON */}
                     <div className="mt-auto pt-4 flex flex-col items-center">
-                        <button onClick={() => setShowAbortModal(true)} className="text-[10px] font-mono font-bold text-gray-600 uppercase tracking-widest hover:text-brand-orange border border-transparent hover:border-brand-orange/50 px-4 py-2 transition-all mb-2">
-                            [ Abort Mission ]
+                        <button onClick={() => setShowAbortModal(true)} className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest hover:text-brand-orange px-6 py-3 transition-colors rounded-full hover:bg-white/5 mb-2">
+                            Abort Mission
                         </button>
                         <Footer />
                     </div>
 
                     {/* ABORT MODAL */}
                     {showAbortModal && (
-                        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-6 backdrop-blur-md">
-                            <div className="w-full max-w-sm bg-[#050505] border-2 border-brand-orange p-8 text-center animate-pulse-orange shadow-2xl">
-                                <h2 className="text-4xl font-black text-brand-orange uppercase mb-3 text-glow-orange">WARNING</h2>
-                                <p className="text-gray-300 mb-8 font-mono uppercase text-sm tracking-wide leading-relaxed">Abort current mission? <br/>All session data will be lost.</p>
+                        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-6 backdrop-blur-xl">
+                            <div className="w-full max-w-sm glass-panel p-8 text-center animate-fade-in border-2 border-brand-orange/50 shadow-2xl">
+                                <div className="w-16 h-16 rounded-full bg-brand-orange/20 flex items-center justify-center mx-auto mb-4">
+                                    <span className="text-3xl">⚠</span>
+                                </div>
+                                <h2 className="text-2xl font-header font-bold text-white uppercase mb-2">Abort Mission?</h2>
+                                <p className="text-gray-400 mb-8 text-sm leading-relaxed">All active session data will be permanently lost.</p>
                                 <div className="flex gap-4">
-                                    <button onClick={() => setShowAbortModal(false)} className="flex-1 py-4 bg-tactical-gray border border-gray-600 text-white font-bold uppercase tracking-wider hover:bg-gray-800">Resume</button>
-                                    <button onClick={() => { SpeechEngine.speak("Mission Aborted."); onCancel(); }} className="flex-1 py-4 bg-brand-orange text-black font-black uppercase tracking-wider shadow-neon-orange hover:bg-white transition-colors">ABORT</button>
+                                    <button onClick={() => setShowAbortModal(false)} className="flex-1 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-colors">Resume</button>
+                                    <button onClick={() => { SpeechEngine.speak("Mission Aborted."); onCancel(); }} className="flex-1 py-4 bg-brand-orange hover:bg-[#ff7700] text-white font-bold rounded-xl shadow-neon-orange transition-colors">ABORT</button>
                                 </div>
                             </div>
                         </div>
@@ -680,23 +672,23 @@
 
             return (
                 <div className="h-full flex flex-col p-6 max-w-lg mx-auto w-full justify-center text-center animate-fade-in z-20 relative">
-                    <div className="scanline-overlay opacity-50"></div>
                     
-                    <h1 className="text-4xl md:text-5xl font-black text-white italic mb-3 drop-shadow-lg text-glow-white">MISSION COMPLETE</h1>
-                    <div className="w-16 h-1 bg-brand-orange mx-auto mb-10 shadow-neon-orange"></div>
+                    <img src="nlcpWHITE.png" alt="NLC Logo" className="w-20 h-20 mx-auto rounded-full ring-1 ring-white/10 mb-6 opacity-80" />
+                    <h1 className="text-4xl md:text-5xl font-header font-bold text-white mb-4 drop-shadow-lg text-glow-white">MISSION COMPLETE</h1>
+                    <div className="w-12 h-1 bg-brand-orange mx-auto mb-10 shadow-neon-orange rounded-full"></div>
                     
                     <div className="grid grid-cols-2 gap-4 mb-10">
-                        <div className="bg-[#0a0a0a] p-5 border border-gray-800 flex flex-col justify-center shadow-lg">
-                            <div className="text-xs font-mono text-brand-orange uppercase tracking-widest mb-2">Duration</div>
+                        <div className="glass-panel p-6 flex flex-col justify-center shadow-lg">
+                            <div className="text-[10px] font-semibold text-brand-orange uppercase tracking-widest mb-2">Duration</div>
                             <div className="text-3xl font-mono text-white">{formatTime(totalTime)}</div>
                         </div>
-                        <div className="bg-[#0a0a0a] p-5 border border-gray-800 flex flex-col justify-center shadow-lg">
-                            <div className="text-xs font-mono text-brand-orange uppercase tracking-widest mb-2">Total Volume</div>
+                        <div className="glass-panel p-6 flex flex-col justify-center shadow-lg">
+                            <div className="text-[10px] font-semibold text-brand-orange uppercase tracking-widest mb-2">Total Volume</div>
                             <div className="text-xl font-mono text-white leading-snug">
                                 {config.exercise === 'A' ? (
                                     <>
                                         {config.seriesCount * 20} Swings<br/>
-                                        <span className="text-gray-600">/</span><br/>
+                                        <span className="text-white/20 text-sm">/</span><br/>
                                         {config.seriesCount * 20} Pushups
                                     </>
                                 ) : (
@@ -706,17 +698,17 @@
                         </div>
                     </div>
                     
-                    <div className="mb-12 relative z-10">
-                        <div className="text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">Post-Action Report</div>
+                    <div className="mb-12 relative z-10 glass-panel p-6">
+                        <div className="text-xs font-semibold text-gray-300 uppercase tracking-widest mb-5">Post-Action Report</div>
                         <div className="flex gap-3">
                             {['EASY', 'STRONG', 'SMOKED'].map((rating) => (
                                 <button 
                                     key={rating} 
                                     onClick={() => setFeedback(rating)} 
-                                    className={`flex-1 py-5 border font-mono text-sm tracking-wider transition-all duration-300 ${
+                                    className={`flex-1 py-4 font-semibold text-xs tracking-wider transition-all duration-300 rounded-xl border ${
                                         feedback === rating 
-                                            ? (rating === 'SMOKED' ? 'bg-[#3d1000] border-brand-orange text-brand-orange shadow-neon-orange scale-105' : 'bg-white text-black border-white shadow-neon-white scale-105') 
-                                            : 'bg-tactical-gray border-[#222] text-gray-500 hover:border-gray-600'
+                                            ? (rating === 'SMOKED' ? 'bg-orange-900/80 border-brand-orange text-brand-orange shadow-neon-orange scale-[1.02]' : 'bg-white text-black border-white shadow-neon-white scale-[1.02]') 
+                                            : 'bg-black/40 border-white/10 text-gray-400 hover:bg-white/5'
                                     }`}
                                 >
                                     {rating}
@@ -724,14 +716,14 @@
                             ))}
                         </div>
                         {feedback === 'SMOKED' && (
-                            <div className="mt-6 text-brand-orange text-xs font-mono border border-brand-orange p-4 bg-[#1a0800] shadow-neon-orange animate-fade-in">
-                                ⚠ WARNING: INTENSITY THRESHOLD EXCEEDED.<br/>REDUCE LOAD NEXT SESSION.
+                            <div className="mt-5 text-brand-orange text-[10px] font-mono border border-brand-orange/50 rounded-lg p-3 bg-orange-900/20 shadow-neon-orange animate-fade-in">
+                                ⚠ INTENSITY THRESHOLD EXCEEDED.<br/>REDUCE LOAD NEXT SESSION.
                             </div>
                         )}
                     </div>
                     
                     <div className="mt-auto flex flex-col items-center relative z-10">
-                        <button onClick={onReset} className="text-gray-400 border border-gray-800 px-8 py-4 text-xs font-mono uppercase tracking-widest hover:text-white hover:border-white transition-all mb-4 bg-[#0a0a0a] hover:shadow-neon-white">
+                        <button onClick={onReset} className="text-gray-400 border border-white/10 px-8 py-4 text-xs font-semibold uppercase tracking-widest rounded-2xl hover:text-white hover:bg-white/5 transition-all mb-4 glass-panel">
                             Restart System
                         </button>
                         <Footer />
